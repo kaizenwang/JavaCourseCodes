@@ -1,5 +1,3 @@
-package Week01_JVM.hello;
-
 /**
  * Hello
  */

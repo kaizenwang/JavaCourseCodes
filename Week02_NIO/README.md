@@ -7,3 +7,10 @@
 5. （选做）运行课上的例子，以及 Netty 的例子，分析相关现象。
 6. （必做）写一段代码，使用 HttpClient 或 OkHttp 访问  http://localhost:8801 ，代码提交到 GitHub。
 
+## 4
+
+通过对 GCLogAnalysis.java 在不同的 GC 算法和不同大小的堆内存下的 GC 日志分析，我发现当堆内存增加时，GC 的次数开始减少，但是每次的 GC 时间开始变长。
+
+## 作业 6
+
+[OkHttpUtils.java](./week02/src/main/java/com/example/week02/OkHttpUtils.java)

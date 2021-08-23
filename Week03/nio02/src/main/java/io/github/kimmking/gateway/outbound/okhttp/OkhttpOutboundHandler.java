@@ -45,7 +45,13 @@ public class OkhttpOutboundHandler {
                 keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
                 new NamedThreadFactory("proxyService"), handler);
 
-        httpClient = new OkHttpClient();
+        httpClient = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .callTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .connectionPool(new ConnectionPool(cores, keepAliveTime, TimeUnit.MILLISECONDS))
+                .build();
     }
 
     private String formatUrl(String backend) {
@@ -56,28 +62,24 @@ public class OkhttpOutboundHandler {
         String backendUrl = router.route(this.backendUrls);
         final String url = backendUrl + fullRequest.uri();
         filter.filter(fullRequest, ctx);
-        proxyService.submit(() -> {
-            fetchGet(fullRequest, ctx, url);
-        });
+        proxyService.submit(() -> fetchGet(fullRequest, ctx, url));
     }
 
     private void fetchGet(final FullHttpRequest inbound, final ChannelHandlerContext ctx, final String url) {
-        new Thread(() -> {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            httpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    e.printStackTrace();
-                }
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
 
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    handleResponse(inbound, ctx, response);
-                }
-            });
-        }).start();
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                handleResponse(inbound, ctx, response);
+            }
+        });
     }
 
     private void handleResponse(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, final Response endpointResponse) {

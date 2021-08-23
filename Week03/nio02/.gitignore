@@ -1,3 +1,19 @@
-.idea/
+##----------Build----------
 target/
+.mvn/
+logs/
+
+### logs
+im-core
+
+### IntelliJ IDEA ###
+.idea
+*.iws
 *.iml
+*.ipr
+build/
+
+##----------Other----------
+# osx
+*~
+.DS_Store

@@ -23,7 +23,8 @@ public class App {
 //        int result = thread();
 //        int result = countDownLatch();
 //        int result = future();
-        int result = completeFuture();
+//        int result = completeFuture();
+        int result = semaphore();
 
         // 确保  拿到result 并输出
         System.out.println("异步计算结果为：" + result);
@@ -63,6 +64,19 @@ public class App {
         }, "count-down-latch-thread");
         thread.start();
         latch.await();
+        return result[0];
+    }
+
+    private static int semaphore() throws InterruptedException {
+        final Semaphore semaphore = new Semaphore(1);
+        final int[] result = new int[1];
+        semaphore.acquire();
+        Thread thread = new Thread(() -> {
+            result[0] = sum();
+            semaphore.release();
+        });
+        thread.start();
+        semaphore.acquireUninterruptibly();
         return result[0];
     }
 

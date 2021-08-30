@@ -4,7 +4,6 @@
 package Homework04;
 
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 /**
  * 本周作业：（必做）思考有多少种方式，在main函数启动一个新线程或线程池，

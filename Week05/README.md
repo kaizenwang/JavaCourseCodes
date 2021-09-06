@@ -1,6 +1,11 @@
+- （必做）写代码实现 Spring Bean 的装配，方式越多越好（XML、Annotation 都可以）, 提交到 GitHub。
+    - 三种方式装配 [SpringBeanDemoApplication.java](spring-bean-demo/src/main/java/com/kai/springbeandemo/SpringBeanDemoApplication.java)
+- （必做）研究一下 JDBC 接口和数据库连接池，掌握它们的设计和用法
+  - [MySQLClient](jdbc-demo/app/src/main/java/jdbc/demo/MySQLClient.java)
+
+
 1. （选做）使 Java 里的动态代理，实现一个简单的 AOP。
 2. （必做）写代码实现 Spring Bean 的装配，方式越多越好（XML、Annotation 都可以）, 提交到 GitHub。
-    - 三种方式装配 [SpringBeanDemoApplication.java](spring-bean-demo/src/main/java/com/kai/springbeandemo/SpringBeanDemoApplication.java)
 3. （选做）实现一个 Spring XML 自定义配置，配置一组 Bean，例如：Student/Klass/School。
 
 4. （选做，会添加到高手附加题）

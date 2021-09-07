@@ -22,6 +22,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'com.zaxxer:HikariCP:4.0.3'
     runtime 'mysql:mysql-connector-java:8.0.26'
 }
 

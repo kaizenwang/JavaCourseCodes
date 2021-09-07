@@ -1,5 +1,7 @@
 package jdbc.demo;
 
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +15,25 @@ public class MySQLClient {
     private static final String URL = "jdbc:mysql://localhost:3306/test";
     private static final String USER = "root";
     private static final String PASSWORD = "123456";
+    private HikariDataSource dataSource;
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    private Connection getConnectionByHikari() throws SQLException {
+        if (dataSource == null) {
+            dataSource = getHikariDataSource();
+        }
+        return dataSource.getConnection();
+    }
+
+    private HikariDataSource getHikariDataSource() {
+        dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(URL);
+        dataSource.setUsername(USER);
+        dataSource.setPassword(PASSWORD);
+        return dataSource;
     }
 
     public Long insert(String sql) throws SQLException {
@@ -69,13 +87,17 @@ public class MySQLClient {
         return list;
     }
 
+    private void bindArgs(PreparedStatement ps, String... args) throws SQLException {
+        for (int i = 0; i < args.length; i++) {
+            ps.setObject(i + 1, args[i]);
+        }
+    }
+
     public Long insertByPrepareStatement(String sql, String... args) throws SQLException {
         long id = 0L;
-        try (Connection conn = getConnection()) {
+        try (Connection conn = getConnectionByHikari()) {
             try (PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < args.length; i++) {
-                    ps.setObject(i + 1, args[i]);
-                }
+                bindArgs(ps, args);
                 ps.execute();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     while (rs.next()) {
@@ -88,22 +110,18 @@ public class MySQLClient {
     }
 
     public void updateByPrepareStatement(String sql, String... args) throws SQLException {
-        try (Connection conn = getConnection()) {
+        try (Connection conn = getConnectionByHikari()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                for (int i = 0; i < args.length; i++) {
-                    ps.setObject(i + 1, args[i]);
-                }
+                bindArgs(ps, args);
                 ps.executeUpdate();
             }
         }
     }
 
     public void deleteByPrepareStatement(String sql, String... args) throws SQLException {
-        try (Connection conn = getConnection()) {
+        try (Connection conn = getConnectionByHikari()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                for (int i = 0; i < args.length; i++) {
-                    ps.setObject(i + 1, args[i]);
-                }
+                bindArgs(ps, args);
                 ps.execute();
             }
         }
@@ -111,11 +129,9 @@ public class MySQLClient {
 
     public List<Student> selectByPrepareStatement(String sql, String... args) throws SQLException {
         List<Student> list = new ArrayList<>();
-        try (Connection conn = getConnection()) {
+        try (Connection conn = getConnectionByHikari()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                for (int i = 0; i < args.length; i++) {
-                    ps.setObject(i + 1, args[i]);
-                }
+                bindArgs(ps, args);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         Student student = new Student();

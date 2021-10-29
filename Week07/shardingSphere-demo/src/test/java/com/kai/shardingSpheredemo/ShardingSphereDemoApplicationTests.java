@@ -1,5 +1,7 @@
 package com.kai.shardingSpheredemo;
 
+import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
+import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -18,6 +20,7 @@ class ShardingSphereDemoApplicationTests {
 //	}
 
 	@Test
+	@ShardingTransactionType(TransactionType.XA)
 	void testInsert() {
 		User user = new User();
 		user.setName("张三");
